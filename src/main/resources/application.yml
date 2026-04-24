@@ -18,3 +18,8 @@ spring:
 
 server:
   port: ${SERVER_PORT:8080}
+
+toolrent:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-me-dev-secret-change-me}
+    expiration: ${JWT_EXPIRATION:PT24H}
