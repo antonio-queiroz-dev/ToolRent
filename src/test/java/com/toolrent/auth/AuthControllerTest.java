@@ -1,8 +1,8 @@
 package com.toolrent.auth;
 
 import com.toolrent.AbstractIntegrationTest;
-import com.toolrent.user.persistence.UserEntity;
-import com.toolrent.user.persistence.UserRepository;
+import com.toolrent.user.User;
+import com.toolrent.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ class AuthControllerTest extends AbstractIntegrationTest {
         mockMvc.perform(post("/auth/register").contentType(APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated());
 
-        UserEntity user = userRepository.findAll().stream()
+        User user = userRepository.findAll().stream()
                 .filter(u -> u.getEmail().equals("hash@locadorasilva.com"))
                 .findFirst()
                 .orElseThrow();

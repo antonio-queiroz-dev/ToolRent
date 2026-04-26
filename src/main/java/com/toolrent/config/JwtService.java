@@ -18,11 +18,13 @@ public class JwtService {
     private final SecretKey key;
     private final long expirationSeconds;
 
+    // construtor
     public JwtService(JwtProperties properties) {
         this.key = Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
         this.expirationSeconds = properties.expiration().toSeconds();
     }
 
+    // gera token
     public String generate(UUID userId, UUID tenantId) {
         Instant now = Instant.now();
         return Jwts.builder()

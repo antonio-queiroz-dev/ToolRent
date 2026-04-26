@@ -1,14 +1,10 @@
-package com.toolrent.auth.service;
+package com.toolrent.auth;
 
-import com.toolrent.auth.web.RegisterRequest;
-import com.toolrent.auth.web.RegisterResponse;
 import com.toolrent.config.JwtService;
-import com.toolrent.tenant.domain.Tenant;
-import com.toolrent.tenant.persistence.TenantEntity;
-import com.toolrent.tenant.persistence.TenantRepository;
-import com.toolrent.user.domain.User;
-import com.toolrent.user.persistence.UserEntity;
-import com.toolrent.user.persistence.UserRepository;
+import com.toolrent.tenant.Tenant;
+import com.toolrent.tenant.TenantRepository;
+import com.toolrent.user.User;
+import com.toolrent.user.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,18 +31,23 @@ public class AuthService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
+
+        // verifica se email já está cadastrado
         if (userRepository.existsByEmail(request.email())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "email already registered");
         }
 
+        // cria tenant
         Tenant tenant = Tenant.create(request.companyName());
-        tenantRepository.save(TenantEntity.fromDomain(tenant));
+        tenantRepository.save(tenant);
 
+        // cria user admin
         String passwordHash = passwordEncoder.encode(request.password());
-        User user = User.createAdmin(tenant.id(), request.userName(), request.email(), passwordHash);
-        userRepository.save(UserEntity.fromDomain(user));
+        User user = User.createAdmin(tenant.getId(), request.userName(), request.email(), passwordHash);
+        userRepository.save(user);
 
-        String token = jwtService.generate(user.id(), tenant.id());
-        return new RegisterResponse(token, user.name(), user.email());
+        // gera token
+        String token = jwtService.generate(user.getId(), tenant.getId());
+        return new RegisterResponse(token, user.getName(), user.getEmail());
     }
 }

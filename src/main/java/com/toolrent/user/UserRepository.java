@@ -1,10 +1,10 @@
-package com.toolrent.user.persistence;
+package com.toolrent.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<UserEntity, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmail(String email);
 }

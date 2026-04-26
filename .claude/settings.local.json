@@ -9,7 +9,9 @@
       "Bash(xargs -I {} sh -c 'unzip -l \"{}\" 2>/dev/null | grep -iE \"flyway\" | head -3 && echo \"=== {} ===\"')",
       "Bash(unzip -l ~/.m2/repository/org/springframework/boot/spring-boot-sql/4.0.5/spring-boot-sql-4.0.5.jar)",
       "Bash(xargs -I {} sh -c 'unzip -l \"{}\" 2>/dev/null | grep -qE \"autoconfigure.*flyway.*Flyway\" && echo \"{}\"')",
-      "Bash(xargs -I {} sh -c 'unzip -l \"{}\" 2>/dev/null | grep -qE \"org/springframework/boot/flyway/autoconfigure\" && echo \"{}\"')"
+      "Bash(xargs -I {} sh -c 'unzip -l \"{}\" 2>/dev/null | grep -qE \"org/springframework/boot/flyway/autoconfigure\" && echo \"{}\"')",
+      "Bash(xargs grep *)",
+      "Bash(./mvnw -q test)"
     ]
   }
 }

@@ -1,6 +1,5 @@
-package com.toolrent.auth.web;
+package com.toolrent.auth;
 
-import com.toolrent.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;

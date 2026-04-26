@@ -1,7 +1,5 @@
-package com.toolrent.user.persistence;
+package com.toolrent.user;
 
-import com.toolrent.user.domain.Role;
-import com.toolrent.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,8 +18,8 @@ import java.util.UUID;
 @Table(name = "app_user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class UserEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class User {
 
     @Id
     private UUID id;
@@ -54,22 +52,18 @@ public class UserEntity {
     @Column(name = "updated_at", insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    public static UserEntity fromDomain(User user) {
-        return new UserEntity(
-                user.id(),
-                user.tenantId(),
-                user.code(),
-                user.name(),
-                user.email(),
-                user.passwordHash(),
-                user.role(),
-                user.active(),
+    public static User createAdmin(UUID tenantId, String name, String email, String passwordHash) {
+        return new User(
+                UUID.randomUUID(),
+                tenantId,
+                1,
+                name,
+                email,
+                passwordHash,
+                Role.ADMIN,
+                true,
                 null,
                 null
         );
-    }
-
-    public User toDomain() {
-        return new User(id, tenantId, code, name, email, password, role, active);
     }
 }

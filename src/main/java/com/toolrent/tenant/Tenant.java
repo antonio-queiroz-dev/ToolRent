@@ -1,6 +1,5 @@
-package com.toolrent.tenant.persistence;
+package com.toolrent.tenant;
 
-import com.toolrent.tenant.domain.Tenant;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -17,8 +16,8 @@ import java.util.UUID;
 @Table(name = "tenant")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class TenantEntity {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Tenant {
 
     @Id
     private UUID id;
@@ -35,11 +34,7 @@ public class TenantEntity {
     @Column(name = "updated_at", insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    public static TenantEntity fromDomain(Tenant tenant) {
-        return new TenantEntity(tenant.id(), tenant.name(), tenant.active(), null, null);
-    }
-
-    public Tenant toDomain() {
-        return new Tenant(id, name, active);
+    public static Tenant create(String name) {
+        return new Tenant(UUID.randomUUID(), name, true, null, null);
     }
 }

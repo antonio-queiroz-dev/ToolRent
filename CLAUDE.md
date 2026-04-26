@@ -7,7 +7,7 @@ SaaS multi-tenant para empresas que alugam ferramentas e maquinários de constru
 ## Stack
 
 - Java 21
-- Spring Boot 3
+- Spring Boot 4.0.5
 - Maven
 - PostgreSQL + Flyway (migrations)
 - Spring Security + JWT (autenticação com tenant_id no claim)
@@ -16,40 +16,32 @@ SaaS multi-tenant para empresas que alugam ferramentas e maquinários de constru
 - Lombok
 - GitHub Actions (CI/CD)
 
+## Gotchas do Spring Boot 4
+
+- Flyway precisa do módulo `spring-boot-flyway` (não basta flyway-core)
+- Testes web precisam de `spring-boot-starter-webmvc-test` (não vem transitivo do starter-test)
+- Arquivos de teste devem terminar em `*Test.java` (Surefire ignora `*IT.java` sem Failsafe configurado)
+
 ## Estrutura de pastas
 
-Package by feature. Cada feature tem 4 subpastas:
+Package by feature. Cada feature é uma pasta com todas as classes na raiz — sem subpastas.
 
 ```
 src/main/java/com/toolrent/
-├── config/                  # Configurações globais (Security, JWT, Hibernate Filter)
-├── common/                  # Classes compartilhadas (exceções base, BaseEntity)
-├── tenant/
-│   ├── domain/              # Entidades de domínio, regras de negócio puras (sem Spring)
-│   ├── service/             # Lógica de aplicação (@Service)
-│   ├── web/                 # Controller + DTOs
-│   └── persistence/         # JPA Entity + Repository
-├── user/
-│   ├── domain/
-│   ├── service/
-│   ├── web/
-│   └── persistence/
+├── config/                  # Configurações globais (Security, JWT)
+├── common/                  # Classes compartilhadas (exceções base)
+├── tenant/                  # Tenant, TenantRepository, TenantService, TenantController
+├── user/                    # User, Role, UserRepository, UserService, UserController
 ├── equipment/
-│   ├── domain/
-│   ├── service/
-│   ├── web/
-│   └── persistence/
 ├── customer/
-│   ├── domain/
-│   ├── service/
-│   ├── web/
-│   └── persistence/
-└── rental/
-    ├── domain/
-    ├── service/
-    ├── web/
-    └── persistence/
+└── rental/                  # Rental, RentalRepository, RentalService, RentalController, RentalPeriodValidator
 ```
+
+## Entidades
+
+- Usar UMA classe por entidade — a JPA Entity direto. Sem separação domain/persistence.
+- Classes de regra de negócio pura (ex: RentalPeriodValidator) ficam direto na pasta da feature, junto com a entidade.
+- Se já existem classes separadas (domain + persistence) de specs anteriores, unificar numa só (a JPA Entity).
 
 ## Idioma
 
@@ -59,11 +51,11 @@ src/main/java/com/toolrent/
 ## Convenções
 
 - Manter código simples e direto. Sem overengineering.
-- Regras de negócio ficam em domain/ (classes Java puras, sem Spring).
-- Service orquestra, domain decide.
+- Service orquestra; classes puras decidem (quando houver regra de negócio).
 - Soft delete em todas as entidades de negócio (campo `active`).
 - Dois IDs por entidade: `id` (UUID, interno) e `code` (sequencial por tenant, visível pro usuário).
 - tenant_id em todas as entidades de negócio.
+- createdAt e updatedAt em todas as entidades (colunas com default now() no banco).
 - Um padrão definido = todos os CRUDs seguem o mesmo padrão.
 
 ## Regras — o que NÃO fazer
@@ -77,6 +69,8 @@ src/main/java/com/toolrent/
 - NÃO misturar regra de negócio no controller. Controller recebe, valida entrada, chama service.
 - NÃO ignorar testes. Toda feature precisa de teste.
 - NÃO mudar padrão que já existe sem motivo. Se o primeiro CRUD segue um padrão, os outros seguem igual.
+- NÃO separar entidade em domain + persistence. Usar a JPA Entity direto.
+- NÃO criar subpastas dentro das features (sem persistence/, service/, web/, domain/). Tudo direto na pasta da feature.
 
 ## Comandos
 
